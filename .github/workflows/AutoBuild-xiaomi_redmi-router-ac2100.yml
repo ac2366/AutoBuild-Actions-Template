@@ -143,6 +143,12 @@ jobs:
         echo "Compile_Date=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
         echo "Display_Date=$(date +%Y/%m/%d)" >> $GITHUB_ENV
 
+    - name: Manually install python2 and create python2.7 symlink
+      run: |
+        sudo apt update
+        sudo apt install -y python2
+        sudo ln -sf /usr/bin/python2 /usr/bin/python2.7 || true
+
     - name: Initialize Environment
       env:
         DEBIAN_FRONTEND: noninteractive
