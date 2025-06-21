@@ -88,6 +88,11 @@ jobs:
         npm_clean: "True"
         os_swap: "True"
 
+    - name: Clean existing LVM volumes
+      run: |
+        sudo vgremove -f buildvg || true
+        sudo pvremove -f /dev/loop2 /dev/loop3 || true
+
     - name: Free up disk space
       if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
       uses: easimon/maximize-build-space@master
