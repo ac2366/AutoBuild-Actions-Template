@@ -6,7 +6,6 @@
 
 name: Redmi AC2100
 
-### 界面控制部分 ( 以下内容请保持不变 )
 on:
   repository_dispatch:
   workflow_dispatch:
@@ -20,42 +19,16 @@ on:
       Tempoary_FLAG:
         description: '固件标签 [可选]'
         default: ''
-### 界面控制部分结束 ( 以上内容请保持不变 )
 
-  ## Git Push 时触发编译(不要删除此行注释)
-  #push:
-  #  branches: 
-  #    - master
-  
-  ## 定时触发编译(不要删除此行注释)
-  #schedule:
-  #  - cron: 0 8 * * 5
-  
-  ## 重新点亮 Star 时触发编译(不要删除此行注释)
-  #watch:
-  #  types: [started]
-
-### 请按需求修改以下内容
-### 环境变量设置
 env:
-# 编译时调用的 [.config] 文件名称
   CONFIG_FILE: xiaomi_redmi-router-ac2100
-# 源码仓库:分支
   DEFAULT_SOURCE: coolsnowwolf/lede:master
-# 上传固件到 Github Releases
   UPLOAD_RELEASES: true
-# 上传固件到 Github Artifacts
   UPLOAD_ARTIFACTS: false
-# 上传 bin 文件夹到 Github Artifacts
   UPLOAD_BIN_ARTIFACTS: false
-# 删除无用文件以增加编译空间
   DELETE_USELESS_FILES: true
-# 删除早期的 workflow 任务
   DELETE_OLD_WORKFLOW: false
-# Cache 加速编译
   CACHE_ACCELERATE: false
-### 结束
-### 请按需求修改以上内容
 
 jobs:
   Compile:
@@ -66,45 +39,6 @@ jobs:
       contents: write
 
     steps:
-    - name: "Optimize disk space"
-      if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
-      uses: "hugoalh/disk-space-optimizer-ghaction@v0.8.0"
-      with:
-        operate_sudo: "True"
-        general_include: ".+"
-        general_exclude: |-
-          ^GCC$
-          ^G\+\+$
-          Clang
-          LLVM
-        docker_include: ".+"
-        docker_prune: "True"
-        docker_clean: "True"
-        apt_prune: "True"
-        apt_clean: "True"
-        homebrew_prune: "True"
-        homebrew_clean: "True"
-        npm_prune: "True"
-        npm_clean: "True"
-        os_swap: "True"
-
-    - name: Clean existing LVM volumes
-      run: |
-        sudo vgremove -f buildvg || true
-        sudo pvremove -f /dev/loop2 /dev/loop3 || true
-
-    - name: Free up disk space
-      if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
-      uses: easimon/maximize-build-space@master
-      with: 
-        root-reserve-mb: 2048
-        swap-size-mb: 1
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-        remove-docker-images: 'true'
-
     - name: Checkout
       uses: actions/checkout@main
       with:
@@ -153,32 +87,10 @@ jobs:
       with:
         operate_sudo: "True"
         general_include: ".+"
-        general_exclude: |-
-          ^GCC$
-          ^G\+\+$
-          Clang
-          LLVM
-        docker_include: ".+"
         docker_prune: "True"
         docker_clean: "True"
         apt_prune: "True"
         apt_clean: "True"
-        homebrew_prune: "True"
-        homebrew_clean: "True"
-        npm_prune: "True"
-        npm_clean: "True"
-        os_swap: "True"
-
-    - name: Free up disk space
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 2048
-        swap-size-mb: 1
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-        remove-docker-images: 'true'
 
     - name: Aggressive disk cleanup
       run: |
